@@ -1,31 +1,53 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SISTEMA_AULA.MODEL.Models;
 using SISTEMA_AULA.MODEL.Services;
+using SISTEMA_AULA.MODEL.ViewModel;
 
-namespace SISTEMA_AULA.API.Controllers
+namespace SISTEMA_AULA.API.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class ClienteController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ClienteController : ControllerBase
-    {
-        private DbsistemasContext _context;
-        private ServiceCliente _Service;
+        
+    private readonly ServiceCliente _service;
 
-        public ClienteController(DbsistemasContext context)
+    public ClienteController(DbsistemasContext context)
+    {
+        _service = new ServiceCliente(context);
+    }
+        
+    [HttpGet]
+    public async Task<IActionResult> Get()
+    {
+        return Ok(await _service.oRepositoryCliente.SelecionarTodosAsync());
+    }
+    [HttpGet("GetClientesById/{id}")]
+    public async Task<IActionResult> Get(int id)
+    {
+        return Ok(await _service.oRepositoryCliente.SelecionarChaveAsync(id));
+    }
+        
+    [HttpPost]
+    public async Task<IActionResult> Post([FromBody] ClienteVM clienteVm)
+    {
+        var cliente = ConvertToCliente(clienteVm);
+        await _service.oRepositoryCliente.IncluirAsync(cliente);
+        return NoContent();
+    }
+        
+    private Cliente ConvertToCliente(ClienteVM clienteVm)
+    {
+        return new Cliente
         {
-            _context = context;
-            _Service = new ServiceCliente(_context);
-        }
-        [HttpGet]
-        public async Task<IActionResult> Get()
-        {
-            return Ok(await _Service.oRepositoryCliente.SelecionarTodosAsync());
-        }
-        [HttpGet("GetClientesById/{id}")]
-        public async Task<IActionResult> Get(int id)
-        {
-            return Ok(await _Service.oRepositoryCliente.SelecionarChaveAsync(id));
-        }
+            CliNome = clienteVm.NomeCliente,
+            CliCpfcnpj = (clienteVm.CPF ?? clienteVm.CNPJ)!,
+            CliDataCadastro = DateTime.Now,
+            CliDataNascimento = clienteVm.DataNascimento,
+            CliEmail = clienteVm.Email,
+            CliNomeMae = clienteVm.NomeMae,
+            CliSexo = clienteVm.Sexo,
+            CliTelefone = clienteVm.Telefone
+        };
     }
 }

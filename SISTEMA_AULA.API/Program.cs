@@ -7,7 +7,12 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 // Add services to the container.
 
 builder.Services.AddDbContext<DbsistemasContext>(opt => opt.UseSqlServer(connectionString));
-builder.Services.AddControllers();
+
+// https://stackoverflow.com/questions/72060349/form-field-is-required-even-if-not-defined-so
+// https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.mvcoptions.suppressimplicitrequiredattributefornonnullablereferencetypes?view=aspnetcore-6.0#microsoft-aspnetcore-mvc-mvcoptions-suppressimplicitrequiredattributefornonnullablereferencetypes
+builder.Services.AddControllers(options => options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true);
+
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
