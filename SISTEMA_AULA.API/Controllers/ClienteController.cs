@@ -50,4 +50,27 @@ public class ClienteController : ControllerBase
             CliTelefone = clienteVm.Telefone
         };
     }
+    
+    [HttpPut]
+    public async Task<IActionResult> Put([FromBody] ClienteVM clienteVm)
+    {
+        if (clienteVm.CodigoCliente is null ) 
+            return BadRequest("Código do cliente não informado");
+        
+        var existingClient = await _service.oRepositoryCliente.SelecionarChaveAsync(clienteVm.CodigoCliente);
+        if (existingClient is null)
+            return NotFound("Cliente não encontrado");
+        
+        existingClient.CliNome = clienteVm.NomeCliente;
+        existingClient.CliCpfcnpj = (clienteVm.CPF ?? clienteVm.CNPJ)!;
+        existingClient.CliDataNascimento = clienteVm.DataNascimento;
+        existingClient.CliEmail = clienteVm.Email;
+        existingClient.CliNomeMae = clienteVm.NomeMae;
+        existingClient.CliSexo = clienteVm.Sexo;
+        existingClient.CliTelefone = clienteVm.Telefone;
+        
+        await _service.oRepositoryCliente.AlterarAsync(existingClient);
+        
+        return NoContent();
+    }
 }

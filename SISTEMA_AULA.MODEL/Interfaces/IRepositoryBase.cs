@@ -20,7 +20,7 @@ namespace SISTEMA_AULA.MODEL.Interfaces
 
         Task<T> IncluirAsync(T obj);
         Task<T> AlterarAsync(T obj);
-        Task<T> SelecionarChaveAsync(params object[] variavel);
+        Task<T?> SelecionarChaveAsync(params object[] variavel);
         Task<List<T>> SelecionarTodosAsync();
         Task ExcluirAsync(T obj);
         Task ExcluirAsync(params object[] variavel);

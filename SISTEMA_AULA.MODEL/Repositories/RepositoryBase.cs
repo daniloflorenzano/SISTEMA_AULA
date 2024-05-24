@@ -102,7 +102,7 @@ namespace SISTEMA_AULA.MODEL.Repositories
            
         }
 
-        public async Task<T> SelecionarChaveAsync(params object[] variavel)
+        public async Task<T?> SelecionarChaveAsync(params object[] variavel)
         {
             return await _context.Set<T>().FindAsync(variavel);
         }
